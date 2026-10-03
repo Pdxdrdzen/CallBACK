@@ -1,0 +1,31 @@
+# Gradle & Backend
+backend/.gradle/
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+*.class
+*.jar
+*.war
+
+# Node & Mobile
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+*.tsbuildinfo
+
+# IDE & Editor files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/*
+!.vscode/settings.json
+
+# Docker & Database
+pgdata/
+rabbitmq_data/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log

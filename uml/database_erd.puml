@@ -1,0 +1,105 @@
+@startuml
+!theme plain
+skinparam linetype ortho
+skinparam roundcorner 5
+skinparam class {
+    BackgroundColor white
+    ArrowColor #2563EB
+    BorderColor #1E293B
+}
+
+entity "users" as users {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * email : VARCHAR(255) <<UNIQUE>>
+    * password_hash : VARCHAR(255)
+    * role : VARCHAR(50)
+    * created_at : TIMESTAMPTZ
+    * updated_at : TIMESTAMPTZ
+}
+
+entity "contacts" as contacts {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * user_id : UUID <<FK>>
+    * name : VARCHAR(150)
+    * phone_number : VARCHAR(30)
+    email : VARCHAR(255)
+    * priority_role : VARCHAR(50)
+    * created_at : TIMESTAMPTZ
+    --
+    INDEX: idx_contacts_user_phone (user_id, phone_number)
+}
+
+entity "emergency_keywords" as emergency_keywords {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * user_id : UUID <<FK>>
+    * keyword : VARCHAR(100)
+    * weight : INT [CHECK 1..100]
+    * is_regex : BOOLEAN [DEFAULT FALSE]
+    * is_active : BOOLEAN [DEFAULT TRUE]
+    --
+    INDEX: idx_keywords_user_active (user_id, is_active)
+}
+
+entity "notification_rules" as notification_rules {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * user_id : UUID <<FK>>
+    * min_priority : VARCHAR(50)
+    * sound_channel : VARCHAR(100)
+    * vibration_pattern : VARCHAR(100)
+    * override_dnd : BOOLEAN [DEFAULT FALSE]
+    --
+    INDEX: idx_notification_rules_user (user_id)
+}
+
+entity "incoming_messages" as incoming_messages {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * recipient_user_id : UUID <<FK>>
+    * sender_identifier : VARCHAR(100)
+    * raw_content : TEXT
+    * sanitized_content : TEXT
+    * calculated_priority : VARCHAR(50)
+    * status : VARCHAR(50)
+    * created_at : TIMESTAMPTZ
+    --
+    INDEX: idx_incoming_messages_recipient_created (recipient_user_id, created_at DESC)
+}
+
+entity "interaction_sla_records" as interaction_sla_records {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * message_id : UUID <<FK>>
+    * user_id : UUID <<FK>>
+    * deadline_at : TIMESTAMPTZ
+    * status : VARCHAR(50)
+    acknowledged_at : TIMESTAMPTZ
+    --
+    INDEX: idx_sla_records_status_deadline (status, deadline_at)
+    INDEX: idx_sla_records_user (user_id)
+}
+
+entity "outbox_events" as outbox_events {
+    * id : UUID <<PK, DEFAULT gen_random_uuid()>>
+    --
+    * aggregate_type : VARCHAR(100)
+    * aggregate_id : VARCHAR(100)
+    * event_type : VARCHAR(100)
+    * payload : JSONB
+    * created_at : TIMESTAMPTZ
+    * processed : BOOLEAN [DEFAULT FALSE]
+    --
+    INDEX: idx_outbox_unprocessed (processed, created_at) WHERE processed = FALSE
+}
+
+users ||--o{ contacts : "user_id -> id (ON DELETE CASCADE)"
+users ||--o{ emergency_keywords : "user_id -> id (ON DELETE CASCADE)"
+users ||--o{ notification_rules : "user_id -> id (ON DELETE CASCADE)"
+users ||--o{ incoming_messages : "recipient_user_id -> id (ON DELETE CASCADE)"
+users ||--o{ interaction_sla_records : "user_id -> id (ON DELETE CASCADE)"
+incoming_messages ||--o{ interaction_sla_records : "message_id -> id (ON DELETE CASCADE)"
+
+@enduml

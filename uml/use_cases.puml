@@ -1,0 +1,43 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Użytkownik" as User
+actor "Zewnętrzne API (FCM)" as FCM
+actor "System CallBACK" as System
+
+package "Aplikacja Mobilna (Frontend)" {
+  usecase "Zarządzanie kontaktami" as UC1
+  usecase "Definiowanie priorytetów ról" as UC2
+  usecase "Ustawianie słów kluczowych\n(alarmowych)" as UC3
+  usecase "Konfiguracja powiadomień\n(dźwięki/wibracje)" as UC4
+  usecase "Konfiguracja przypomnień\no kontakcie" as UC5
+  usecase "Odbiór powiadomienia Push" as UC6
+}
+
+package "Serwer (Backend)" {
+  usecase "Przyjęcie przychodzącego\nkomunikatu" as UC7
+  usecase "Analiza treści wiadomości" as UC8
+  usecase "Klasyfikacja i priorytetyzacja" as UC9
+  usecase "Kolejkowanie - RabbitMQ" as UC10
+  usecase "Wysyłka powiadomienia do FCM" as UC11
+  usecase "Monitorowanie czasu interakcji" as UC12
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+
+System --> UC7
+System --> UC8
+System --> UC9
+System --> UC10
+System --> UC11
+System --> UC12
+
+UC11 -.-> FCM : Wysyła \nżądanie Push
+FCM -.-> UC6 : Dostarcza \npowiadomienie
+@enduml
