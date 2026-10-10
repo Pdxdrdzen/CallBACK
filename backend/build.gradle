@@ -1,7 +1,19 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.flywaydb:flyway-database-postgresql:11.15.0'
+		classpath 'org.postgresql:postgresql:42.7.4'
+	}
+}
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.flywaydb.flyway' version '11.15.0'
+	id("io.freefair.lombok") version "9.8.0"
+
 }
 
 group = 'com.callback'
@@ -14,61 +26,36 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	// Spring Boot Core & Web
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-	// Database Migrations & Driver
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+
 	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-	// JWT (JSON Web Tokens - RFC 7519)
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
-	// Rate Limiting (Token Bucket Algorithm)
-	implementation 'com.bucket4j:bucket4j-core:8.10.1'
-
-	// OpenAPI 3.0 / Swagger Documentation
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
-
-	// Firebase Admin SDK (Cloud Messaging - FCM Push Notifications)
-	implementation 'com.google.firebase:firebase-admin:9.4.3'
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-
-	// Testing
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-amqp-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-	// Testcontainers
-	testImplementation 'org.testcontainers:testcontainers:1.20.4'
-	testImplementation 'org.testcontainers:junit-jupiter:1.20.4'
-	testImplementation 'org.testcontainers:postgresql:1.20.4'
-	testImplementation 'org.testcontainers:rabbitmq:1.20.4'
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/callback_db'
+	user = 'callback_user'
+	password = 'callback_password'
+	locations = ['filesystem:src/main/resources/db/migration']
 }
 
 tasks.named('test') {
