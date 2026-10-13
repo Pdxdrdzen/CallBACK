@@ -5,7 +5,7 @@ import com.callback.backend.application.dto.LoginRequest;
 import com.callback.backend.application.dto.RegisterRequest;
 import com.callback.backend.application.service.AuthService;
 import com.callback.backend.infrastructure.persistence.entity.UserEntity;
-import com.callback.backend.infrastructure.persistence.repository.UserRepository;
+import com.callback.backend.infrastructure.persistence.repository.UserJpaRepository;
 
 import com.callback.backend.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
-        if (userRepository.existsByEmail(request.email())) {
+        if (userJpaRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Użytkownik o podanym adresie email już istnieje.");
         }
 
@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
 
-        userRepository.save(user);
+        userJpaRepository.save(user);
 
 
         String jwtToken = jwtService.generateToken(user);
@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
 
-        UserEntity user = userRepository.findByEmail(request.email())
+        UserEntity user = userJpaRepository.findByEmail(request.email())
                 .orElseThrow(() -> new IllegalArgumentException("Nieprawidłowy adres email lub hasło."));
 
 
