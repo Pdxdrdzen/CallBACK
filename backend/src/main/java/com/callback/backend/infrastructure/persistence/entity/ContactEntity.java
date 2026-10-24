@@ -2,12 +2,19 @@ package com.callback.backend.infrastructure.persistence.entity;
 
 import com.callback.backend.domain.model.PriorityRole;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "contacts")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContactEntity {
 
     @Id

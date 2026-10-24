@@ -1,15 +1,16 @@
 package com.callback.backend.infrastructure.persistence.repository;
 
-import org.springframework.stereotype.Repository;
-
+import com.callback.backend.infrastructure.persistence.entity.ContactEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 import java.util.UUID;
-import com.callback.backend.infrastructure.persistence.entity.ContactEntity;
 
 @Repository
-public interface ContactJpaRepository {
+public interface ContactJpaRepository extends JpaRepository<ContactEntity, UUID> { // <--- Tutaj była luka
 
     boolean existsByUserIdAndPhoneNumber(UUID userId, String phoneNumber);
 

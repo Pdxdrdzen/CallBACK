@@ -1,7 +1,10 @@
 package com.callback.backend.application.service;
 
 import com.callback.backend.application.dto.ContactResponse;
+import com.callback.backend.application.dto.CreateContactRequest;
 import com.callback.backend.application.dto.UpdateContactRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
