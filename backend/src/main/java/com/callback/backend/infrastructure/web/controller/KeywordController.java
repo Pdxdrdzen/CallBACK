@@ -26,7 +26,7 @@ public class KeywordController {
 
     private final KeywordService keywordService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<KeywordResponse> createKeyword(
             @Valid @RequestBody CreateKeywordRequest request,
             Principal principal) {
@@ -34,7 +34,7 @@ public class KeywordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping("/get")
     public ResponseEntity<List<KeywordResponse>> getKeywords(Principal principal) {
         List<KeywordResponse> response = keywordService.getKeywords(principal.getName());
         return ResponseEntity.ok(response);
