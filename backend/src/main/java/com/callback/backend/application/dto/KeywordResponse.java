@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public record KeywordResponse(
         UUID id,
-        String word,
+        String keyword,
         Integer weight
 ) {}

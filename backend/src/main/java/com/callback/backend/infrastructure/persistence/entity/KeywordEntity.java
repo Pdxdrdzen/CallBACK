@@ -35,7 +35,7 @@ public class KeywordEntity {
     private UserEntity user;
 
     @Column(nullable = false, length = 50)
-    private String word;
+    private String keyword;
 
     @Column(nullable = false)
     private Integer weight;

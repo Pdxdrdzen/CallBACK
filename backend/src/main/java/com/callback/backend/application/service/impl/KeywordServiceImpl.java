@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +29,15 @@ public class KeywordServiceImpl implements KeywordService {
         UserEntity user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException(NO_USER));
 
-        String normalizedWord = request.word().trim().toLowerCase();
+        String normalizedWord = request.keyword().trim().toLowerCase();
 
-        if (keywordRepository.existsByUserIdAndWordIgnoreCase(user.getId(), normalizedWord)) {
+        if (keywordRepository.existsByUserIdAndKeywordIgnoreCase(user.getId(), normalizedWord)) {
             throw new IllegalArgumentException("To słowo kluczowe już istnieje.");
         }
 
         KeywordEntity keyword = KeywordEntity.builder()
                 .user(user)
-                .word(normalizedWord)
+                .keyword(normalizedWord)
                 .weight(request.weight())
                 .build();
 
@@ -64,10 +63,10 @@ public class KeywordServiceImpl implements KeywordService {
 
         return keywordRepository.findAllByUserId(user.getId()).stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private KeywordResponse mapToResponse(KeywordEntity entity) {
-        return new KeywordResponse(entity.getId(), entity.getWord(), entity.getWeight());
+        return new KeywordResponse(entity.getId(), entity.getKeyword(), entity.getWeight());
     }
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface KeywordJpaRepository extends JpaRepository<KeywordEntity, UUID> {
-    boolean existsByUserIdAndWordIgnoreCase(UUID userId, String word);
+    boolean existsByUserIdAndKeywordIgnoreCase(UUID userId, String keyword);
     Optional<KeywordEntity> findByIdAndUserId(UUID id, UUID userId);
     List<KeywordEntity> findAllByUserId(UUID userId);
 }
